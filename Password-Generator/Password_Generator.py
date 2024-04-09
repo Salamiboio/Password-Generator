@@ -14,11 +14,11 @@ from datetime import datetime
 import pyminizip
 
 #passwords
-password = "" #Get app password from google account
+app_password = "" #Get app password from google account
 zip_password = "" #Password for your zip file
 
-sender = "gmail" #Your gmail
-recipients = ["gmail"] #Gmails of recipients
+sender = "" #Your gmail
+recipients = [""] #Gmails of recipients
 
 #defines
 now = datetime.now()
@@ -52,7 +52,7 @@ subject = f"Passwords Changed at {now}"
 body = ""
 
 #sends the email
-def send_email(subject, body, sender, recipients, password):
+def send_email(subject, body, sender, recipients, app_password):
     msg = email.mime.multipart.MIMEMultipart(body)
     msg['Subject'] = subject
     msg['From'] = sender
@@ -67,9 +67,9 @@ def send_email(subject, body, sender, recipients, password):
     part.add_header('Content-Disposition', 'attachment', filename=os.path.basename(filename))
     msg.attach(part)
     with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp_server:
-       smtp_server.login(sender, password)
+       smtp_server.login(sender, app_password)
        smtp_server.sendmail(sender, recipients, msg.as_string())
     print("Message sent!")
 
 
-send_email(subject, body, sender, recipients, password)
+send_email(subject, body, sender, recipients, app_password)
