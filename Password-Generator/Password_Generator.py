@@ -11,6 +11,14 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email import encoders
 from datetime import datetime
+import pyminizip
+
+#passwords
+password = "" #Get app password from google account
+zip_password = "" #Password for your zip file
+
+sender = "gmail" #Your gmail
+recipients = ["gmail"] #Gmails of recipients
 
 #defines
 now = datetime.now()
@@ -22,7 +30,8 @@ special_in = input("What Special Characters are allowed?: ")
 special = tuple(special_in.split())#takes special_in input, splits it and makes it a tuple
 charList = string.ascii_letters + string.digits #Puts letters and numbers into the charList
 p_final = [] #final password character list
-password_file = f"{home}\\documents\\passwords.txt" #where password is stored
+source_dir = f"{home}\\documents\\"
+password_file = f"{source_dir}passwords.txt" #where password is stored
 
 for x in special: #Runs through special characters and adds them to charList
     charList += x
@@ -35,13 +44,12 @@ password = "".join(p_final) #makes password list into an actual password
 with open(password_file, 'a') as file: #adds password to text file, if it doesn't exist it creates the text file
     file.write(f"{app_for} = {password}\n")
 
+pyminizip.compress(password_file, "", f"{source_dir}/passwords.zip", zip_password , int(1)) #Creates password locked zip file
+
 #Message contents
 now = datetime.now()
 subject = f"Passwords Changed at {now}"
 body = ""
-sender = "gmail"
-recipients = ["gmail"]
-password = "app_password" #Get app password from google account
 
 #sends the email
 def send_email(subject, body, sender, recipients, password):
@@ -51,7 +59,7 @@ def send_email(subject, body, sender, recipients, password):
     msg['To'] = ', '.join(recipients)
     body = email.mime.text.MIMEText(f"The passwords file had new passwords added at {now}")
     msg.attach(body)
-    filename=f'{home}\\documents\\passwords.txt'
+    filename= f"{source_dir}passwords.zip"
     with open(filename, "rb") as fs:
         part = MIMEBase('application', "octet-stream")
         part.set_payload(fs.read())
